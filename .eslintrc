@@ -1,0 +1,48 @@
+{
+    "env": {
+        "browser": true,
+        "es6": true,
+    },
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "modules": "true"
+        }
+    },
+    "rules": {
+        "semi": "off",
+        "no-plusplus": "off",
+        "no-console": "warn",
+        "indent": 2,
+        "linebreak-style": [
+            "error",
+            "windows"
+        ],
+        "no-underscore-dangle": [
+            "error",
+            {
+                "allowAfterThis": true
+            }
+        ],
+        "class-methods-use-this": [
+            "error",
+            {
+                "exceptMethods": [
+                    "createRandomList"
+                ]
+            }
+        ],
+        "no-bitwise": [
+            "error",
+            {
+                "allow": [
+                    "|"
+                ]
+            }
+        ]
+    },
+    "extends": [
+        "airbnb-base/legacy"
+    ],
+}
