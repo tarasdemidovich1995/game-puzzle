@@ -7,8 +7,12 @@ export default class Game {
     this.playfield = null;
     this.size = null;
     this.emptyCoord = null;
-    this.startTime = null;
+    this.time = 0;
     this.steps = 0;
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
+    this.timer = null;
   }
 
   createPlayfield(size) {
@@ -78,13 +82,13 @@ export default class Game {
   setState(size) {
     this.size = size;
     this.playfield = this.createPlayfield(size);
-    this.setTime();
+    this.startTimer();
   }
 
   getState() {
-    const date = this.getTime();
-    const mins = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
-    const secs = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
+    let { secs, mins } = this.getTime();
+    mins = mins < 10 ? '0' + mins : mins;
+    secs = secs < 10 ? '0' + secs : secs;
     return {
       size: this.size,
       playfield: this.playfield,
@@ -93,11 +97,18 @@ export default class Game {
     }
   }
 
-  setTime() {
-    this.startTime = Date.now();
+  startTimer() {
+    this.timer = setInterval(() => {
+      this.time++;
+    }, 1000);
   }
 
   getTime() {
-    return new Date(Date.now() - this.startTime);
+    const secs = this.time % 60;
+    const mins = (this.time - secs) / 60;
+    return {
+      secs: secs,
+      mins: mins
+    }
   }
 }
