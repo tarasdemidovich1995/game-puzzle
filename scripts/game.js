@@ -7,12 +7,7 @@ export default class Game {
     this.playfield = null;
     this.size = null;
     this.emptyCoord = null;
-    this.time = 0;
-    this.steps = 0;
-    if (this.timer) {
-      clearInterval(this.timer);
-    }
-    this.timer = null;
+    this.isGameOver = false;
   }
 
   createPlayfield(size) {
@@ -43,37 +38,33 @@ export default class Game {
   }
 
   move(direction) {
-    const y = this.emptyCoord[0];
-    const x = this.emptyCoord[1];
+    const y = +this.emptyCoord[0];
+    const x = +this.emptyCoord[1];
     switch (direction) {
-      case 'top':
-        if (y - 1 < 0) return;
+      case 'bottom':
+        if (y - 1 < 0) return false;
         this.playfield[y][x] = this.playfield[y - 1][x];
         this.playfield[y - 1][x] = 0;
         this.emptyCoord = `${y - 1}${x}`;
-        this.steps++;
-        break;
-      case 'bottom':
-        if (y + 1 > this.size) return;
+        return true;
+      case 'top':
+        if (y + 1 > this.size - 1) return false;
         this.playfield[y][x] = this.playfield[y + 1][x];
         this.playfield[y + 1][x] = 0;
         this.emptyCoord = `${y + 1}${x}`;
-        this.steps++;
-        break;
-      case 'left':
-        if (x - 1 < 0) return;
+        return true;
+      case 'right':
+        if (x - 1 < 0) return false;
         this.playfield[y][x] = this.playfield[y][x - 1];
         this.playfield[y][x - 1] = 0;
         this.emptyCoord = `${y}${x - 1}`;
-        this.steps++;
-        break;
-      case 'right':
-        if (x + 1 > this.size) return;
+        return true;
+      case 'left':
+        if (x + 1 > this.size - 1) return false;
         this.playfield[y][x] = this.playfield[y][x + 1];
         this.playfield[y][x + 1] = 0;
         this.emptyCoord = `${y}${x + 1}`;
-        this.steps++;
-        break;
+        return true;
       default:
         throw new Error('Wrong direction in game');
     }
@@ -82,33 +73,13 @@ export default class Game {
   setState(size) {
     this.size = size;
     this.playfield = this.createPlayfield(size);
-    this.startTimer();
   }
 
   getState() {
-    let { secs, mins } = this.getTime();
-    mins = mins < 10 ? '0' + mins : mins;
-    secs = secs < 10 ? '0' + secs : secs;
     return {
       size: this.size,
       playfield: this.playfield,
-      time: `${mins}:${secs}`,
-      steps: this.steps
-    }
-  }
-
-  startTimer() {
-    this.timer = setInterval(() => {
-      this.time++;
-    }, 1000);
-  }
-
-  getTime() {
-    const secs = this.time % 60;
-    const mins = (this.time - secs) / 60;
-    return {
-      secs: secs,
-      mins: mins
+      isGameOver: this.isGameOver
     }
   }
 }
