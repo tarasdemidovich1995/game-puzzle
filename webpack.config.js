@@ -4,6 +4,7 @@ const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = (env, options) => {
   const isProduction = options.mode === 'production';
@@ -11,7 +12,7 @@ module.exports = (env, options) => {
     mode: isProduction ? 'production' : 'development',
     devtool: isProduction ? 'none' : 'source-map',
     watch: !isProduction,
-    entry: ['./main.js', './style.css'],
+    entry: ['@babel/polyfill', './main.js', './style.css'],
     output: {
       path: path.join(__dirname, '/dist'),
       filename: 'script.js'
@@ -29,9 +30,17 @@ module.exports = (env, options) => {
           }
         },
         {
+          test: /\.(png|jpe?g|gif)$/i,
+          use: [
+            {
+              loader: 'file-loader'
+            }
+          ]
+        },
+        {
           test: /\.s?css$/,
           use: [
-            MiniCssExtractPlugin.loader, 'css-loader',
+            MiniCssExtractPlugin.loader, 'css-loader'
           ]
         },
         {
@@ -47,7 +56,10 @@ module.exports = (env, options) => {
       }),
       new MiniCssExtractPlugin({
         filename: 'style.css'
-      })
+      }),
+      new CopyWebpackPlugin([
+        { from: path.join(__dirname, '/images'), to: path.join(__dirname, '/dist/images') }
+      ])
     ]
   }
   return config;

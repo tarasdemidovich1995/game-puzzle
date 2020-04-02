@@ -1,37 +1,41 @@
 {
-  "name": "codejam-virtual-keyboard",
+  "name": "game-puzzle",
   "version": "1.0.0",
-  "description": "start Virtual Keyboard task",
+  "description": "initial commit",
   "main": "main.js",
   "scripts": {
-    "lint": "eslint ./scripts",
-    "lint --fix": "eslint ./scripts --fix",
+    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack --mode development",
     "prod": "webpack --mode production"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tarasdemidovich1995/codejam-virtual-keyboard.git"
+    "url": "git+https://github.com/tarasdemidovich1995/game-puzzle.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/tarasdemidovich1995/codejam-virtual-keyboard/issues"
+    "url": "https://github.com/tarasdemidovich1995/game-puzzle/issues"
   },
-  "homepage": "https://github.com/tarasdemidovich1995/codejam-virtual-keyboard#readme",
+  "homepage": "https://github.com/tarasdemidovich1995/game-puzzle#readme",
   "devDependencies": {
     "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.9.0",
     "babel-loader": "^8.1.0",
     "clean-webpack-plugin": "^3.0.0",
+    "copy-webpack-plugin": "^5.1.1",
     "css-loader": "^3.4.2",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.1.0",
+    "file-loader": "^6.0.0",
     "html-loader": "^1.0.0",
     "html-webpack-plugin": "^4.0.3",
     "mini-css-extract-plugin": "^0.9.0",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11"
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.8.7"
   }
 }
