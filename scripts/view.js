@@ -66,11 +66,7 @@ export default class View {
     for (let i = 1; i < listLength; i++) {
       const img = new Image();
       const promise = new Promise((resolve, reject) => {
-        img.onload = () => {
-          setTimeout(() => {
-            resolve(img);
-          }, 500);
-        };
+        img.onload = () => resolve(img);
         img.onerror = () => reject(new Error('image loading error'));
       });
       img.src = `./images/${size}x${size}/image_${i < 10 ? '0' : ''}${i}.jpg`;

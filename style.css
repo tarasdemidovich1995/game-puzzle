@@ -2,3 +2,7 @@ body {
     max-width: 808px;
     margin: 0 auto;
 }
+
+canvas {
+    cursor: pointer;
+}

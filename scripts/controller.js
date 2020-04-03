@@ -2,23 +2,28 @@ export default class Controller {
   constructor(game, view) {
     this.game = game;
     this.view = view;
+    this.canvas = this.view.canvas;
     this.timerId = null;
     this.time = 0;
     this.steps = 0;
     this.isPlaying = false;
+    this.size = 5;
 
     document.onkeydown = this.handleKeyDown.bind(this);
+    this.canvas.onmousedown = this.handleMouseDown.bind(this);
   }
 
   play(size) {
     this.game.setState(size);
     this.view.renderLoadScreen();
     this.view.setState(size).then(() => {
-      this.view.clearLoadScreen();
-      this.isPlaying = true;
-      this.updateGame();
-      this.startTimer();
-    })
+      setTimeout(() => {
+        this.view.clearLoadScreen();
+        this.isPlaying = true;
+        this.updateGame();
+        this.startTimer();
+      }, 1200);
+    });
   }
 
   //   update() {
@@ -66,7 +71,7 @@ export default class Controller {
     switch (event.keyCode) {
       case 13: // ENTER
         if (!state.isGameOver) {
-          this.play(3);
+          this.play(this.size);
         }
         break;
       case 37: // left arrow
@@ -94,7 +99,45 @@ export default class Controller {
         }
         break;
       default:
-        throw new Error('Handle error');
+        break;
+    }
+  }
+
+  handleMouseDown(event) {
+    const playfieldX = this.view.playfieldX;
+    const playfieldY = this.view.playfieldY;
+    const imageWidth = this.view.imageWidth;
+    const imgX = Math.floor((event.offsetX - playfieldX) / imageWidth);
+    const imgY = Math.floor((event.offsetY - playfieldY) / imageWidth);
+    const emptyCoordY = +this.game.emptyCoord[0];
+    const emptyCoordX = +this.game.emptyCoord[1];
+    switch (true) {
+      case (imgY === (emptyCoordY + 1) && imgX === emptyCoordX):
+        if (this.game.move('top')) {
+          this.steps++;
+          this.updateGame();
+        }
+        break;
+      case (imgY === (emptyCoordY - 1) && imgX === emptyCoordX):
+        if (this.game.move('bottom')) {
+          this.steps++;
+          this.updateGame();
+        }
+        break;
+      case (imgX === (emptyCoordX + 1) && imgY === emptyCoordY):
+        if (this.game.move('left')) {
+          this.steps++;
+          this.updateGame();
+        }
+        break;
+      case (imgX === (emptyCoordX - 1) && imgY === emptyCoordY):
+        if (this.game.move('right')) {
+          this.steps++;
+          this.updateGame();
+        }
+        break;
+      default:
+        break;
     }
   }
 }

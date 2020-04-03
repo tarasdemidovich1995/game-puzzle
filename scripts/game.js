@@ -46,24 +46,28 @@ export default class Game {
         this.playfield[y][x] = this.playfield[y - 1][x];
         this.playfield[y - 1][x] = 0;
         this.emptyCoord = `${y - 1}${x}`;
+        this.checkGameOver();
         return true;
       case 'top':
         if (y + 1 > this.size - 1) return false;
         this.playfield[y][x] = this.playfield[y + 1][x];
         this.playfield[y + 1][x] = 0;
         this.emptyCoord = `${y + 1}${x}`;
+        this.checkGameOver();
         return true;
       case 'right':
         if (x - 1 < 0) return false;
         this.playfield[y][x] = this.playfield[y][x - 1];
         this.playfield[y][x - 1] = 0;
         this.emptyCoord = `${y}${x - 1}`;
+        this.checkGameOver();
         return true;
       case 'left':
         if (x + 1 > this.size - 1) return false;
         this.playfield[y][x] = this.playfield[y][x + 1];
         this.playfield[y][x + 1] = 0;
         this.emptyCoord = `${y}${x + 1}`;
+        this.checkGameOver();
         return true;
       default:
         throw new Error('Wrong direction in game');
@@ -81,5 +85,17 @@ export default class Game {
       playfield: this.playfield,
       isGameOver: this.isGameOver
     }
+  }
+
+  checkGameOver() {
+    let prev = this.playfield[0][0];
+    for (let y = 0; y < this.playfield.length; y++) {
+      for (let x = 0; x < this.playfield[y].length; x++) {
+        if (y === this.playfield.length - 1 && x === this.playfield.length - 1 && this.playfield[y][x] === 0) break;
+        if (this.playfield[y][x] < prev) return;
+        prev = this.playfield[y][x];
+      }
+    }
+    this.isGameOver = true;
   }
 }
