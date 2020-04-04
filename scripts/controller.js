@@ -7,9 +7,11 @@ export default class Controller {
     this.time = 0;
     this.steps = 0;
     this.isPlaying = false;
-    this.size = 7;
+    this.size = 4;
 
     document.onkeydown = this.handleKeyDown.bind(this);
+
+    this.canvas.onclick = this.handleClick.bind(this);
     this.canvas.onmousedown = this.handleMouseDown.bind(this);
   }
 
@@ -84,6 +86,7 @@ export default class Controller {
   }
 
   handleMouseDown(event) {
+    if (event.offsetX > this.view.playfieldX + this.view.playfieldInnerWidth) return;
     const playfieldX = this.view.playfieldX;
     const playfieldY = this.view.playfieldY;
     const imageWidth = this.view.imageWidth;
@@ -91,6 +94,71 @@ export default class Controller {
     const imgY = Math.floor((event.offsetY - playfieldY) / imageWidth);
     const emptyCoordY = +this.game.emptyCoord[0];
     const emptyCoordX = +this.game.emptyCoord[1];
+    const imgNum = this.game.playfield[imgY][imgX];
+
+    let cooldown = true;
+
+    this.canvas.onclick = this.handleClick.bind(this);
+
+    setTimeout(() => {
+      cooldown = false;
+    }, 100);
+
+    const moveImageAt = (offsetX, offsetY) => {
+      const halfImgWidth = this.view.imageWidth / 2;
+      const playfieldWidth = this.view.playfieldWidth;
+      const borderWidth = this.view.playfieldBorderWidth;
+      let posX = offsetX;
+      let posY = offsetY;
+      this.game.playfield[imgY][imgX] = 0;
+      if (offsetX > playfieldWidth - halfImgWidth - borderWidth) posX = playfieldWidth - halfImgWidth - borderWidth;
+      if (offsetX < halfImgWidth + borderWidth) posX = halfImgWidth + borderWidth;
+      if (offsetY > playfieldWidth - halfImgWidth - borderWidth) posY = playfieldWidth - halfImgWidth - borderWidth;
+      if (offsetY < halfImgWidth + borderWidth) posY = halfImgWidth + borderWidth;
+      this.view.renderDragNDrop(this.game.playfield, imgNum, posX, posY);
+      this.canvas.onclick = null;
+    }
+
+    // eslint-disable-next-line no-shadow
+    const handleMouseMove = (event) => {
+      if (!cooldown) moveImageAt(event.offsetX, event.offsetY);
+    }
+
+    this.canvas.addEventListener('mousemove', handleMouseMove);
+
+    this.canvas.onmouseout = () => {
+      this.game.playfield[imgY][imgX] = imgNum;
+      this.updateGame()
+      this.canvas.removeEventListener('mousemove', handleMouseMove);
+    };
+
+    // eslint-disable-next-line no-shadow
+    this.canvas.onmouseup = (event) => {
+      const eventX = Math.floor((event.offsetX - playfieldX) / imageWidth);
+      const eventY = Math.floor((event.offsetY - playfieldY) / imageWidth);
+      if (eventX === emptyCoordX && eventY === emptyCoordY) {
+        this.game.playfield[emptyCoordY][emptyCoordX] = imgNum;
+        this.game.emptyCoord = `${imgY}${imgX}`;
+        this.steps++;
+      } else {
+        this.game.playfield[imgY][imgX] = imgNum;
+      }
+      this.updateGame()
+      this.canvas.removeEventListener('mousemove', handleMouseMove);
+      this.canvas.onmouseup = null;
+    }
+  }
+
+  handleClick(event) {
+    if (event.offsetX > this.view.playfieldX + this.view.playfieldInnerWidth) return;
+    const playfieldX = this.view.playfieldX;
+    const playfieldY = this.view.playfieldY;
+    const imageWidth = this.view.imageWidth;
+    const imgX = Math.floor((event.offsetX - playfieldX) / imageWidth);
+    const imgY = Math.floor((event.offsetY - playfieldY) / imageWidth);
+    const emptyCoordY = +this.game.emptyCoord[0];
+    const emptyCoordX = +this.game.emptyCoord[1];
+    const imgNum = this.game.playfield[imgY][imgX];
     switch (true) {
       case (imgY === (emptyCoordY + 1) && imgX === emptyCoordX):
         if (this.game.move('top')) {
@@ -100,7 +168,7 @@ export default class Controller {
             playfieldY + imgY * imageWidth,
             playfieldX + emptyCoordX * imageWidth,
             playfieldY + emptyCoordY * imageWidth,
-            this.game.playfield[emptyCoordY][emptyCoordX]
+            imgNum
           );
         }
         break;
@@ -112,7 +180,7 @@ export default class Controller {
             playfieldY + imgY * imageWidth,
             playfieldX + emptyCoordX * imageWidth,
             playfieldY + emptyCoordY * imageWidth,
-            this.game.playfield[emptyCoordY][emptyCoordX]
+            imgNum
           );
         }
         break;
@@ -124,7 +192,7 @@ export default class Controller {
             playfieldY + imgY * imageWidth,
             playfieldX + emptyCoordX * imageWidth,
             playfieldY + emptyCoordY * imageWidth,
-            this.game.playfield[emptyCoordY][emptyCoordX]
+            imgNum
           );
         }
         break;
@@ -136,7 +204,7 @@ export default class Controller {
             playfieldY + imgY * imageWidth,
             playfieldX + emptyCoordX * imageWidth,
             playfieldY + emptyCoordY * imageWidth,
-            this.game.playfield[emptyCoordY][emptyCoordX]
+            imgNum
           );
         }
         break;

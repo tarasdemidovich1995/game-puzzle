@@ -145,7 +145,7 @@ export default class View {
           const image = this.imagesList[playfield[y][x] - 1];
           const imgX = this.playfieldX + x * this.imageWidth;
           const imgY = this.playfieldY + y * this.imageHeight;
-          this.drawImg(image, imgX, imgY);
+          this.renderImg(image, imgX, imgY);
         }
       }
     }
@@ -167,7 +167,7 @@ export default class View {
           } else {
             imgY -= step;
           }
-          this.drawImg(image, imgX, imgY);
+          this.renderImg(image, imgX, imgY);
         }, 5);
         break;
       case (prevX === nextX && imgY < nextY):
@@ -179,7 +179,7 @@ export default class View {
           } else {
             imgY += step;
           }
-          this.drawImg(image, imgX, imgY);
+          this.renderImg(image, imgX, imgY);
         }, 5);
         break;
       case (prevY === nextY && imgX > nextX):
@@ -191,7 +191,7 @@ export default class View {
           } else {
             imgX -= step;
           }
-          this.drawImg(image, imgX, imgY);
+          this.renderImg(image, imgX, imgY);
         }, 5);
         break;
       case (prevY === nextY && imgX < nextX):
@@ -203,12 +203,18 @@ export default class View {
           } else {
             imgX += step;
           }
-          this.drawImg(image, imgX, imgY);
+          this.renderImg(image, imgX, imgY);
         }, 5);
         break;
       default:
         break;
     }
+  }
+
+  renderDragNDrop(playfield, imgNum, imgX, imgY) {
+    const image = this.imagesList[imgNum - 1];
+    this.renderGameScreen(playfield);
+    this.renderImg(image, imgX - this.imageWidth / 2, imgY - this.imageWidth / 2);
   }
 
   renderStepPanel(steps) {
@@ -223,7 +229,7 @@ export default class View {
     this.context.fillText(`Time: ${time}`, this.timePanelX, this.timePanelY);
   }
 
-  drawImg(image, imgX, imgY) {
+  renderImg(image, imgX, imgY) {
     this.context.strokeStyle = 'yellow';
     this.context.lineWidth = this.imageBorderWidth;
     this.context.strokeRect(imgX, imgY, this.imageWidth, this.imageHeight);
