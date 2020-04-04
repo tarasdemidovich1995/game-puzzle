@@ -151,7 +151,7 @@ export default class View {
     }
   }
 
-  renderGameAnimation(prevX, prevY, nextX, nextY, imgNum) {
+  renderImageAnimation(prevX, prevY, nextX, nextY, imgNum) {
     const image = this.imagesList[imgNum - 1];
     let imgX = prevX;
     let imgY = prevY;
@@ -160,7 +160,7 @@ export default class View {
     switch (true) {
       case (prevX === nextX && imgY > nextY):
         timerId = setInterval(() => {
-          this.clearImg(imgX, imgY);
+          this.clearField(nextX, nextY, this.imageWidth, this.imageWidth * 2);
           if (imgY - step <= nextY) {
             imgY = nextY;
             clearInterval(timerId);
@@ -172,7 +172,7 @@ export default class View {
         break;
       case (prevX === nextX && imgY < nextY):
         timerId = setInterval(() => {
-          this.clearImg(imgX, imgY);
+          this.clearField(prevX, prevY, this.imageWidth, this.imageWidth * 2);
           if (imgY + step >= nextY) {
             imgY = nextY;
             clearInterval(timerId);
@@ -184,7 +184,7 @@ export default class View {
         break;
       case (prevY === nextY && imgX > nextX):
         timerId = setInterval(() => {
-          this.clearImg(imgX, imgY);
+          this.clearField(nextX, nextY, this.imageWidth * 2, this.imageWidth);
           if (imgX - step <= nextX) {
             clearInterval(timerId);
             imgX = nextX;
@@ -196,7 +196,7 @@ export default class View {
         break;
       case (prevY === nextY && imgX < nextX):
         timerId = setInterval(() => {
-          this.clearImg(imgX, imgY);
+          this.clearField(prevX, prevY, this.imageWidth * 2, this.imageWidth);
           if (imgX + step >= nextX) {
             clearInterval(timerId);
             imgX = nextX;
@@ -236,12 +236,7 @@ export default class View {
     );
   }
 
-  clearImg(imgX, imgY) {
-    this.context.clearRect(
-      imgX,
-      imgY,
-      this.imageWidth,
-      this.imageWidth
-    );
+  clearField(x, y, width, height) {
+    this.context.clearRect(x, y, width, height);
   }
 }

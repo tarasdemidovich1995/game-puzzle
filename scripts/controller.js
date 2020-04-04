@@ -30,14 +30,18 @@ export default class Controller {
   //     // this.game.movePieceDown();
   //     this.updateView();
 
-  updateGame() {
+  updateGame(imgPrevX, imgPrevY, imgNextX, imgNextY, imgNum) {
     const { playfield, isGameOver } = this.game.getState();
     if (isGameOver) {
       this.view.renderEndScreen();
     } else if (!this.isPlaying) {
     //   this.view.renderPauseScreen();
     } else {
-      this.view.renderGameScreen(playfield);
+      if (arguments.length > 0) {
+        this.view.renderImageAnimation(imgPrevX, imgPrevY, imgNextX, imgNextY, imgNum);
+      } else {
+        this.view.renderGameScreen(playfield);
+      }
       this.updateSteps();
       this.updateTime();
     }
@@ -74,30 +78,6 @@ export default class Controller {
           this.play(this.size);
         }
         break;
-      case 37: // left arrow
-        if (this.game.move('left')) {
-          this.steps++;
-          this.updateGame();
-        }
-        break;
-      case 38: // up arrow
-        if (this.game.move('top')) {
-          this.steps++;
-          this.updateGame();
-        }
-        break;
-      case 39: // right arrow
-        if (this.game.move('right')) {
-          this.steps++;
-          this.updateGame();
-        }
-        break;
-      case 40: // down arrow
-        if (this.game.move('bottom')) {
-          this.steps++;
-          this.updateGame();
-        }
-        break;
       default:
         break;
     }
@@ -115,57 +95,49 @@ export default class Controller {
       case (imgY === (emptyCoordY + 1) && imgX === emptyCoordX):
         if (this.game.move('top')) {
           this.steps++;
-          this.view.renderGameAnimation(
+          this.updateGame(
             playfieldX + imgX * imageWidth,
             playfieldY + imgY * imageWidth,
             playfieldX + emptyCoordX * imageWidth,
             playfieldY + emptyCoordY * imageWidth,
             this.game.playfield[emptyCoordY][emptyCoordX]
           );
-          this.updateSteps();
-          this.updateTime();
         }
         break;
       case (imgY === (emptyCoordY - 1) && imgX === emptyCoordX):
         if (this.game.move('bottom')) {
           this.steps++;
-          this.view.renderGameAnimation(
+          this.updateGame(
             playfieldX + imgX * imageWidth,
             playfieldY + imgY * imageWidth,
             playfieldX + emptyCoordX * imageWidth,
             playfieldY + emptyCoordY * imageWidth,
             this.game.playfield[emptyCoordY][emptyCoordX]
           );
-          this.updateSteps();
-          this.updateTime();
         }
         break;
       case (imgX === (emptyCoordX + 1) && imgY === emptyCoordY):
         if (this.game.move('left')) {
           this.steps++;
-          this.view.renderGameAnimation(
+          this.updateGame(
             playfieldX + imgX * imageWidth,
             playfieldY + imgY * imageWidth,
             playfieldX + emptyCoordX * imageWidth,
             playfieldY + emptyCoordY * imageWidth,
             this.game.playfield[emptyCoordY][emptyCoordX]
           );
-          this.updateSteps();
-          this.updateTime();
         }
         break;
       case (imgX === (emptyCoordX - 1) && imgY === emptyCoordY):
         if (this.game.move('right')) {
           this.steps++;
-          this.view.renderGameAnimation(
+          this.updateGame(
             playfieldX + imgX * imageWidth,
             playfieldY + imgY * imageWidth,
             playfieldX + emptyCoordX * imageWidth,
             playfieldY + emptyCoordY * imageWidth,
             this.game.playfield[emptyCoordY][emptyCoordX]
           );
-          this.updateSteps();
-          this.updateTime();
         }
         break;
       default:
