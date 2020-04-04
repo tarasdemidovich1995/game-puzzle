@@ -96,6 +96,7 @@ export default class Controller {
     const emptyCoordX = +this.game.emptyCoord[1];
     const imgNum = this.game.playfield[imgY][imgX];
 
+    let isMoving = false;
     let cooldown = true;
 
     this.canvas.onclick = this.handleClick.bind(this);
@@ -121,15 +122,17 @@ export default class Controller {
 
     // eslint-disable-next-line no-shadow
     const handleMouseMove = (event) => {
+      isMoving = true;
       if (!cooldown) moveImageAt(event.offsetX, event.offsetY);
     }
 
     this.canvas.addEventListener('mousemove', handleMouseMove);
 
     this.canvas.onmouseout = () => {
-      this.game.playfield[imgY][imgX] = imgNum;
-      this.updateGame()
+      if (isMoving) this.game.playfield[imgY][imgX] = imgNum;
+      this.updateGame();
       this.canvas.removeEventListener('mousemove', handleMouseMove);
+      this.canvas.onmouseout = null;
     };
 
     // eslint-disable-next-line no-shadow
@@ -146,6 +149,7 @@ export default class Controller {
       this.updateGame()
       this.canvas.removeEventListener('mousemove', handleMouseMove);
       this.canvas.onmouseup = null;
+      isMoving = false;
     }
   }
 
