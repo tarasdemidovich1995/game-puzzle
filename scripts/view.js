@@ -139,15 +139,75 @@ export default class View {
     this.context.strokeStyle = 'red';
     this.context.lineWidth = this.playfieldBorderWidth;
     this.context.strokeRect(0, 0, this.playfieldWidth, this.playfieldHeight);
-    for (let i = 0; i < playfield.length; i++) {
-      for (let j = 0; j < playfield[i].length; j++) {
-        if (playfield[i][j] !== 0) {
-          const image = this.imagesList[playfield[i][j] - 1];
-          const imgX = j;
-          const imgY = i;
+    for (let y = 0; y < playfield.length; y++) {
+      for (let x = 0; x < playfield[y].length; x++) {
+        if (playfield[y][x] !== 0) {
+          const image = this.imagesList[playfield[y][x] - 1];
+          const imgX = this.playfieldX + x * this.imageWidth;
+          const imgY = this.playfieldY + y * this.imageHeight;
           this.drawImg(image, imgX, imgY);
         }
       }
+    }
+  }
+
+  renderGameAnimation(prevX, prevY, nextX, nextY, imgNum) {
+    const image = this.imagesList[imgNum - 1];
+    let imgX = prevX;
+    let imgY = prevY;
+    let timerId = null;
+    const step = this.imageWidth / 20;
+    switch (true) {
+      case (prevX === nextX && imgY > nextY):
+        timerId = setInterval(() => {
+          this.clearImg(imgX, imgY);
+          if (imgY - step <= nextY) {
+            imgY = nextY;
+            clearInterval(timerId);
+          } else {
+            imgY -= step;
+          }
+          this.drawImg(image, imgX, imgY);
+        }, 5);
+        break;
+      case (prevX === nextX && imgY < nextY):
+        timerId = setInterval(() => {
+          this.clearImg(imgX, imgY);
+          if (imgY + step >= nextY) {
+            imgY = nextY;
+            clearInterval(timerId);
+          } else {
+            imgY += step;
+          }
+          this.drawImg(image, imgX, imgY);
+        }, 5);
+        break;
+      case (prevY === nextY && imgX > nextX):
+        timerId = setInterval(() => {
+          this.clearImg(imgX, imgY);
+          if (imgX - step <= nextX) {
+            clearInterval(timerId);
+            imgX = nextX;
+          } else {
+            imgX -= step;
+          }
+          this.drawImg(image, imgX, imgY);
+        }, 5);
+        break;
+      case (prevY === nextY && imgX < nextX):
+        timerId = setInterval(() => {
+          this.clearImg(imgX, imgY);
+          if (imgX + step >= nextX) {
+            clearInterval(timerId);
+            imgX = nextX;
+          } else {
+            imgX += step;
+          }
+          this.drawImg(image, imgX, imgY);
+        }, 5);
+        break;
+      default:
+        break;
     }
   }
 
@@ -163,15 +223,25 @@ export default class View {
     this.context.fillText(`Time: ${time}`, this.timePanelX, this.timePanelY);
   }
 
-  drawImg(image, x, y) {
-    const fieldX = this.playfieldX + x * this.imageWidth;
-    const fieldY = this.playfieldY + y * this.imageHeight;
-    const imgX = fieldX + this.imageBorderWidth;
-    const imgY = fieldY + this.imageBorderWidth;
-
+  drawImg(image, imgX, imgY) {
     this.context.strokeStyle = 'yellow';
     this.context.lineWidth = this.imageBorderWidth;
-    this.context.strokeRect(fieldX, fieldY, this.imageWidth, this.imageHeight);
-    this.context.drawImage(image, imgX, imgY, this.imageInnerWidth, this.imageInnerHeight);
+    this.context.strokeRect(imgX, imgY, this.imageWidth, this.imageHeight);
+    this.context.drawImage(
+      image,
+      imgX + this.imageBorderWidth,
+      imgY + this.imageBorderWidth,
+      this.imageInnerWidth,
+      this.imageInnerHeight
+    );
+  }
+
+  clearImg(imgX, imgY) {
+    this.context.clearRect(
+      imgX,
+      imgY,
+      this.imageWidth,
+      this.imageWidth
+    );
   }
 }

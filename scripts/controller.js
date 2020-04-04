@@ -7,7 +7,7 @@ export default class Controller {
     this.time = 0;
     this.steps = 0;
     this.isPlaying = false;
-    this.size = 5;
+    this.size = 7;
 
     document.onkeydown = this.handleKeyDown.bind(this);
     this.canvas.onmousedown = this.handleMouseDown.bind(this);
@@ -115,25 +115,57 @@ export default class Controller {
       case (imgY === (emptyCoordY + 1) && imgX === emptyCoordX):
         if (this.game.move('top')) {
           this.steps++;
-          this.updateGame();
+          this.view.renderGameAnimation(
+            playfieldX + imgX * imageWidth,
+            playfieldY + imgY * imageWidth,
+            playfieldX + emptyCoordX * imageWidth,
+            playfieldY + emptyCoordY * imageWidth,
+            this.game.playfield[emptyCoordY][emptyCoordX]
+          );
+          this.updateSteps();
+          this.updateTime();
         }
         break;
       case (imgY === (emptyCoordY - 1) && imgX === emptyCoordX):
         if (this.game.move('bottom')) {
           this.steps++;
-          this.updateGame();
+          this.view.renderGameAnimation(
+            playfieldX + imgX * imageWidth,
+            playfieldY + imgY * imageWidth,
+            playfieldX + emptyCoordX * imageWidth,
+            playfieldY + emptyCoordY * imageWidth,
+            this.game.playfield[emptyCoordY][emptyCoordX]
+          );
+          this.updateSteps();
+          this.updateTime();
         }
         break;
       case (imgX === (emptyCoordX + 1) && imgY === emptyCoordY):
         if (this.game.move('left')) {
           this.steps++;
-          this.updateGame();
+          this.view.renderGameAnimation(
+            playfieldX + imgX * imageWidth,
+            playfieldY + imgY * imageWidth,
+            playfieldX + emptyCoordX * imageWidth,
+            playfieldY + emptyCoordY * imageWidth,
+            this.game.playfield[emptyCoordY][emptyCoordX]
+          );
+          this.updateSteps();
+          this.updateTime();
         }
         break;
       case (imgX === (emptyCoordX - 1) && imgY === emptyCoordY):
         if (this.game.move('right')) {
           this.steps++;
-          this.updateGame();
+          this.view.renderGameAnimation(
+            playfieldX + imgX * imageWidth,
+            playfieldY + imgY * imageWidth,
+            playfieldX + emptyCoordX * imageWidth,
+            playfieldY + emptyCoordY * imageWidth,
+            this.game.playfield[emptyCoordY][emptyCoordX]
+          );
+          this.updateSteps();
+          this.updateTime();
         }
         break;
       default:
