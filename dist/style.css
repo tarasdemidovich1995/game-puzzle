@@ -1,4 +1,18 @@
-body {
+html {
+    font-family: 'Press Start 2P', cursive;
+    font-size: ;
+}
+
+.container {
     max-width: 808px;
     margin: 0 auto;
 }
+
+h1 {
+    font-size: 30px;
+}
+
+canvas {
+    cursor: pointer;
+}
+

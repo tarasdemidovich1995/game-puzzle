@@ -1,17 +1,21 @@
 export default class Controller {
-  constructor(game, view) {
+  constructor(game, view, menu) {
     this.game = game;
     this.view = view;
+    this.menu = menu;
     this.canvas = this.view.canvas;
+    this.container = this.menu.container;
+
     this.timerId = null;
     this.time = 0;
     this.steps = 0;
     this.isPlaying = false;
     this.size = 4;
+    this.name = null;
 
     document.onkeydown = this.handleKeyDown.bind(this);
-
-    this.canvas.onclick = this.handleClick.bind(this);
+    this.container.onclick = this.containerClick.bind(this);
+    this.canvas.onclick = this.canvasClick.bind(this);
     this.canvas.onmousedown = this.handleMouseDown.bind(this);
   }
 
@@ -99,7 +103,7 @@ export default class Controller {
     let isMoving = false;
     let cooldown = true;
 
-    this.canvas.onclick = this.handleClick.bind(this);
+    this.canvas.onclick = this.canvasClick.bind(this);
 
     setTimeout(() => {
       cooldown = false;
@@ -153,7 +157,7 @@ export default class Controller {
     }
   }
 
-  handleClick(event) {
+  canvasClick(event) {
     if (event.offsetX > this.view.playfieldX + this.view.playfieldInnerWidth) return;
     const playfieldX = this.view.playfieldX;
     const playfieldY = this.view.playfieldY;
@@ -215,5 +219,38 @@ export default class Controller {
       default:
         break;
     }
+  }
+
+  openMainMenu() {
+    this.menu.openMainMenu();
+  }
+
+  openSaveMenu() {
+    this.menu.openSaveMenu();
+  }
+
+  openDifficultyMenu() {
+    this.menu.openDifficultyMenu();
+  }
+
+  openScoresMenu() {
+    this.menu.openScoresMenu();
+  }
+
+  openStartForm() {
+    this.menu.openStartForm();
+  }
+
+  changeDifficulty(target) {
+    const difficulty = target.innerHTML[0];
+    this.difficulty = difficulty;
+    this.openMainMenu();
+  }
+
+  containerClick(event) {
+    const target = event.target;
+    if (!target.hasAttribute('data-action')) return;
+    const action = target.getAttribute('data-action');
+    this[action](target);
   }
 }

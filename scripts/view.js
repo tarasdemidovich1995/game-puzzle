@@ -1,13 +1,12 @@
 export default class View {
-  constructor(elem, width, height) {
-    this.elem = elem;
+  constructor(container, width, height) {
+    this.container = container;
     this.width = width;
     this.height = height;
 
     this.createCanvas();
     this.createPlayfield();
     this.createGamePanel();
-    this.elem.appendChild(this.canvas);
 
     this.loadScreenTimer = null;
   }
@@ -47,10 +46,12 @@ export default class View {
 
     this.context.textAlign = 'start';
     this.context.textBaseline = 'top';
-    this.context.font = '14px "Press Start 2P';
+    this.context.font = '22px "Roboto"';
   }
 
   async setState(size) {
+    this.elem.appendChild(this.canvas);
+
     this.size = size;
     this.imageBorderWidth = 2;
     this.imageWidth = this.playfieldInnerWidth / size;
@@ -127,8 +128,8 @@ export default class View {
       }
 
       this.context.fillStyle = 'black';
-      this.context.fillText('     Please wait,     ', infoX, infoY + 0);
-      this.context.fillText('the images are loading', infoX, infoY + 24);
+      this.context.fillText('         Please wait,     ', infoX + 40, infoY + 0);
+      this.context.fillText('the images are loading', infoX + 40, infoY + 24);
 
       count = count === 3 ? 0 : count + 1;
     }, 300);
