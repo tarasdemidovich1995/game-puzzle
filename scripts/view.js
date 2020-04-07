@@ -6,7 +6,6 @@ export default class View {
 
     this.createCanvas();
     this.createPlayfield();
-    this.createGamePanel();
 
     this.loadScreenTimer = null;
   }
@@ -19,43 +18,19 @@ export default class View {
   }
 
   createPlayfield() {
-    this.playfieldWidth = this.width - 200;
+    this.playfieldWidth = this.width;
     this.playfieldHeight = this.height;
-    this.playfieldBorderWidth = 4;
-    this.playfieldInnerWidth = this.playfieldWidth - this.playfieldBorderWidth * 2;
-    this.playfieldInnerHeight = this.playfieldHeight - this.playfieldBorderWidth * 2;
-    this.playfieldX = this.playfieldBorderWidth;
-    this.playfieldY = this.playfieldBorderWidth;
-  }
-
-  createGamePanel() {
-    this.panelWidth = 190;
-    this.panelHeight = this.height;
-    this.panelX = this.playfieldWidth + this.playfieldBorderWidth * 2 + 10;
-    this.panelY = 0;
-
-    this.timePanelWidth = this.panelWidth;
-    this.timePanelHeight = 24;
-    this.timePanelX = this.panelX;
-    this.timePanelY = this.panelY;
-
-    this.stepPanelWidth = this.panelWidth;
-    this.stepPanelHeight = 24;
-    this.stepPanelX = this.timePanelX;
-    this.stepPanelY = this.timePanelY + 24;
-
-    this.context.textAlign = 'start';
-    this.context.textBaseline = 'top';
-    this.context.font = '22px "Roboto"';
+    this.playfieldX = 0;
+    this.playfieldY = 0;
   }
 
   async setState(size) {
-    this.elem.appendChild(this.canvas);
+    this.container.appendChild(this.canvas);
 
     this.size = size;
     this.imageBorderWidth = 2;
-    this.imageWidth = this.playfieldInnerWidth / size;
-    this.imageHeight = this.playfieldInnerHeight / size;
+    this.imageWidth = this.playfieldWidth / size;
+    this.imageHeight = this.playfieldHeight / size;
     this.imageInnerWidth = this.imageWidth - this.imageBorderWidth * 2;
     this.imageInnerHeight = this.imageHeight - this.imageBorderWidth * 2;
     return this.downloadImages(size);
@@ -82,26 +57,18 @@ export default class View {
     this.context.clearRect(0, 0, this.width, this.height);
   }
 
+  removeCanvas() {
+    this.container.remove();
+  }
+
+  clearField(x, y, width, height) {
+    this.context.clearRect(x, y, width, height);
+  }
+
   clearLoadScreen() {
     clearInterval(this.loadScreenTimer);
     this.loadScreenTimer = null;
     this.clearScreen();
-  }
-
-  clearPlayfield() {
-    this.context.clearRect(0, 0, this.playfieldWidth, this.playfieldHeight);
-  }
-
-  clearGamePanel() {
-    this.context.clearRect(this.panelX, this.panelY, this.panelWidth, this.panelHeight);
-  }
-
-  clearStepPanel() {
-    this.context.clearRect(this.stepPanelX, this.stepPanelY, this.stepPanelWidth, this.stepPanelHeight);
-  }
-
-  clearTimePanel() {
-    this.context.clearRect(this.timePanelX, this.timePanelY, this.timePanelWidth, this.timePanelHeight);
   }
 
   renderLoadScreen() {
@@ -120,26 +87,26 @@ export default class View {
 
       for (let i = 0; i < 4; i++) {
         const radius = i === count ? bigCircleRadius : smallCircleRadius;
-        this.context.fillStyle = 'black';
+        this.context.fillStyle = '#7c7c7c';
         this.context.lineWidth = 2;
         this.context.beginPath();
         this.context.arc(circleX + circlesDistance * i, circleY, radius, 0, Math.PI * 2);
         this.context.fill();
       }
 
-      this.context.fillStyle = 'black';
-      this.context.fillText('         Please wait,     ', infoX + 40, infoY + 0);
-      this.context.fillText('the images are loading', infoX + 40, infoY + 24);
+      this.context.font = '24px "Roboto"';
+      this.context.textAlign = 'center';
+      this.context.textBaseline = 'middle';
+      this.context.fillStyle = '#7c7c7c';
+      this.context.fillText('     Please wait,     ', infoX + infoWidth / 2, infoY + 0);
+      this.context.fillText('the images are loading', infoX + infoWidth / 2, infoY + 36);
 
       count = count === 3 ? 0 : count + 1;
     }, 300);
   }
 
   renderGameScreen(playfield) {
-    this.clearPlayfield();
-    this.context.strokeStyle = 'red';
-    this.context.lineWidth = this.playfieldBorderWidth;
-    this.context.strokeRect(0, 0, this.playfieldWidth, this.playfieldHeight);
+    this.clearScreen();
     for (let y = 0; y < playfield.length; y++) {
       for (let x = 0; x < playfield[y].length; x++) {
         if (playfield[y][x] !== 0) {
@@ -218,20 +185,8 @@ export default class View {
     this.renderImg(image, imgX - this.imageWidth / 2, imgY - this.imageWidth / 2);
   }
 
-  renderStepPanel(steps) {
-    this.clearGamePanel();
-    this.context.fillStyle = 'black';
-    this.context.fillText(`Steps: ${steps}`, this.stepPanelX, this.stepPanelY);
-  }
-
-  renderTimePanel(time) {
-    this.clearTimePanel();
-    this.context.fillStyle = 'black';
-    this.context.fillText(`Time: ${time}`, this.timePanelX, this.timePanelY);
-  }
-
   renderImg(image, imgX, imgY) {
-    this.context.strokeStyle = 'yellow';
+    this.context.strokeStyle = '#7c7c7c';
     this.context.lineWidth = this.imageBorderWidth;
     this.context.strokeRect(imgX, imgY, this.imageWidth, this.imageHeight);
     this.context.drawImage(
@@ -241,9 +196,5 @@ export default class View {
       this.imageInnerWidth,
       this.imageInnerHeight
     );
-  }
-
-  clearField(x, y, width, height) {
-    this.context.clearRect(x, y, width, height);
   }
 }

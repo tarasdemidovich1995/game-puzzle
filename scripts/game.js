@@ -74,9 +74,15 @@ export default class Game {
     }
   }
 
-  setState(size) {
+  setState(size, playfield, emptyCoord, isGameOver) {
     this.size = size;
-    this.playfield = this.createPlayfield(size);
+    if (!playfield) {
+      this.playfield = this.createPlayfield(size);
+    } else {
+      this.playfield = playfield;
+    }
+    if (emptyCoord) this.emptyCoord = emptyCoord;
+    if (isGameOver) this.isGameOver = isGameOver;
   }
 
   getState() {

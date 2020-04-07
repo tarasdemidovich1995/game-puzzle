@@ -15,7 +15,7 @@ window.menu = menu;
 const game = new Game();
 window.game = game;
 
-const view = new View(container, 808, 608);
+const view = new View(container, 600, 600);
 window.view = view;
 
 const controller = new Controller(game, view, menu);

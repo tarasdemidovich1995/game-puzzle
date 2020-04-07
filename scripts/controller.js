@@ -6,20 +6,15 @@ export default class Controller {
     this.canvas = this.view.canvas;
     this.container = this.menu.container;
 
-    this.timerId = null;
-    this.time = 0;
-    this.steps = 0;
-    this.isPlaying = false;
-    this.size = 4;
-    this.name = null;
+    this.reset();
 
-    document.onkeydown = this.handleKeyDown.bind(this);
     this.container.onclick = this.containerClick.bind(this);
     this.canvas.onclick = this.canvasClick.bind(this);
     this.canvas.onmousedown = this.handleMouseDown.bind(this);
+    this.menu.form.onsubmit = this.handleSubmit.bind(this);
   }
 
-  play(size) {
+  startGame(size) {
     this.game.setState(size);
     this.view.renderLoadScreen();
     this.view.setState(size).then(() => {
@@ -32,16 +27,59 @@ export default class Controller {
     });
   }
 
-  //   update() {
-  //     // this.game.movePieceDown();
-  //     this.updateView();
+  continueGame() {
+    this.view.renderLoadScreen();
+    this.view.setState(this.size).then(() => {
+      setTimeout(() => {
+        this.view.clearLoadScreen();
+        this.isPlaying = true;
+        this.updateGame();
+        this.startTimer();
+      }, 1200);
+    });
+  }
+
+  reset() {
+    this.menu.time.innerHTML = '';
+    this.menu.steps.innerHTML = '';
+    this.stopTimer();
+    this.timerId = null;
+    this.time = 0;
+    this.steps = 0;
+    this.isPlaying = false;
+    this.size = 4;
+    this.name = null;
+  }
+
+  getState() {
+    return {
+      name: this.name,
+      size: this.size,
+      playfield: this.game.playfield,
+      emptyCoord: this.game.emptyCoord,
+      steps: this.steps,
+      time: this.time,
+      date: new Date(Date.now())
+    }
+  }
+
+  setState(state) {
+    const {
+      name, size, playfield, emptyCoord, steps, time
+    } = state;
+    this.game.setState(size, playfield, emptyCoord, false);
+    this.name = name;
+    this.size = size;
+    this.steps = steps;
+    this.time = time;
+  }
 
   updateGame(imgPrevX, imgPrevY, imgNextX, imgNextY, imgNum) {
     const { playfield, isGameOver } = this.game.getState();
     if (isGameOver) {
-      this.view.renderEndScreen();
+      this.openGameOverMenu();
     } else if (!this.isPlaying) {
-    //   this.view.renderPauseScreen();
+      // add open pause menu
     } else {
       if (arguments.length > 0) {
         this.view.renderImageAnimation(imgPrevX, imgPrevY, imgNextX, imgNextY, imgNum);
@@ -56,11 +94,11 @@ export default class Controller {
   updateTime() {
     const secs = this.time % 60;
     const mins = (this.time - secs) / 60;
-    this.view.renderTimePanel(`${mins < 10 ? '0' + mins : mins}:${secs < 10 ? '0' + secs : secs}`);
+    this.menu.time.innerHTML = `Time: ${mins < 10 ? '0' + mins : mins}:${secs < 10 ? '0' + secs : secs}`;
   }
 
   updateSteps() {
-    this.view.renderStepPanel(this.steps);
+    this.menu.steps.innerHTML = `Steps: ${this.steps}`;
   }
 
   startTimer() {
@@ -73,20 +111,6 @@ export default class Controller {
 
   stopTimer() {
     clearInterval(this.timerId);
-  }
-
-  handleKeyDown(event) {
-    const state = this.game.getState();
-
-    switch (event.keyCode) {
-      case 13: // ENTER
-        if (!state.isGameOver) {
-          this.play(this.size);
-        }
-        break;
-      default:
-        break;
-    }
   }
 
   handleMouseDown(event) {
@@ -150,10 +174,11 @@ export default class Controller {
       } else {
         this.game.playfield[imgY][imgX] = imgNum;
       }
-      this.updateGame()
       this.canvas.removeEventListener('mousemove', handleMouseMove);
       this.canvas.onmouseup = null;
       isMoving = false;
+      this.game.checkGameOver();
+      this.updateGame();
     }
   }
 
@@ -221,8 +246,38 @@ export default class Controller {
     }
   }
 
+  saveGame() {
+    const state = this.getState();
+    let savesList = JSON.parse(localStorage.getItem('gamePuzzleSaves'));
+    if (savesList) {
+      if (savesList.length > 9) savesList.pop();
+    } else {
+      savesList = [];
+    }
+    savesList.push(state);
+    localStorage.setItem('gamePuzzleSaves', JSON.stringify(savesList));
+    this.openMainMenu();
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  exit() {
+    window.history.back();
+  }
+
+  loadSave(target) {
+    const savesList = this.menu.getSaves();
+    const index = Array.from(this.menu.saveMenu.children).indexOf(target);
+    const state = savesList[index];
+    this.setState(state);
+    this.openGameMenu();
+    this.continueGame(this.size);
+  }
+
   openMainMenu() {
     this.menu.openMainMenu();
+    this.container.classList.remove('container_game-mode');
+    this.reset();
+    this.view.clearScreen();
   }
 
   openSaveMenu() {
@@ -241,10 +296,41 @@ export default class Controller {
     this.menu.openStartForm();
   }
 
+  openGameMenu() {
+    this.menu.openGameMenu();
+    this.container.classList.add('container_game-mode');
+  }
+
+  openGameOverMenu() {
+    this.stopTimer();
+    const {
+      name, size, steps, time
+    } = this.getState();
+    const secs = time % 60;
+    const mins = (time - secs) / 60;
+    const timeString = `${mins < 10 ? '0' + mins : mins}:${secs < 10 ? '0' + secs : secs}`;
+
+    const state = {
+      name: name,
+      size: size,
+      steps: steps,
+      time: time
+    };
+
+    let scoresList = JSON.parse(localStorage.getItem('gamePuzzleScores'));
+    if (!scoresList) scoresList = [];
+    scoresList.push(state);
+    localStorage.setItem('gamePuzzleScores', JSON.stringify(scoresList));
+
+    this.container.classList.remove('container_game-mode');
+    this.menu.openGameOverMenu(steps, timeString);
+    this.game.reset();
+  }
+
   changeDifficulty(target) {
-    const difficulty = target.innerHTML[0];
-    this.difficulty = difficulty;
-    this.openMainMenu();
+    const difficulty = +target.innerHTML[0];
+    this.size = difficulty;
+    this.menu.openMainMenu();
   }
 
   containerClick(event) {
@@ -252,5 +338,12 @@ export default class Controller {
     if (!target.hasAttribute('data-action')) return;
     const action = target.getAttribute('data-action');
     this[action](target);
+  }
+
+  handleSubmit(event) {
+    event.preventDefault();
+    this.name = this.menu.getName() ? this.menu.getName() : 'Without name';
+    this.openGameMenu();
+    this.startGame(this.size);
   }
 }
