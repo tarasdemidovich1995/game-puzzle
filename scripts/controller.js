@@ -161,6 +161,7 @@ export default class Controller {
       this.updateGame();
       this.canvas.removeEventListener('mousemove', handleMouseMove);
       this.canvas.onmouseout = null;
+      this.canvas.onmouseup = null;
     };
 
     // eslint-disable-next-line no-shadow
@@ -314,12 +315,14 @@ export default class Controller {
       name: name,
       size: size,
       steps: steps,
-      time: time
+      time: timeString
     };
 
     let scoresList = JSON.parse(localStorage.getItem('gamePuzzleScores'));
     if (!scoresList) scoresList = [];
     scoresList.push(state);
+    scoresList.sort((a, b) => a.steps - b.steps);
+    if (scoresList.length >= 10) scoresList.pop();
     localStorage.setItem('gamePuzzleScores', JSON.stringify(scoresList));
 
     this.container.classList.remove('container_game-mode');

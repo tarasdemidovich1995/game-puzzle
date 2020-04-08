@@ -144,7 +144,7 @@ export default class Menu {
         name, size, steps, time
       } = this.scoresList[i];
       li.classList.add('menu__item');
-      li.innerHTML = `Name: ${name}  size: ${size}x${size}  steps: ${steps}  time: ${time}`;
+      li.innerHTML = `Name: ${name}  Size: ${size}x${size}  Steps: ${steps}  Time: ${time}`;
       list.append(li);
     }
     return list;
