@@ -260,7 +260,6 @@ export default class Controller {
     this.openMainMenu();
   }
 
-  // eslint-disable-next-line class-methods-use-this
   exit() {
     window.history.back();
   }

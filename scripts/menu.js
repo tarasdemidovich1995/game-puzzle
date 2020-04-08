@@ -63,7 +63,6 @@ export default class Menu {
     return list;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   createGameOverMenu(steps, time) {
     const div = document.createElement('div');
     div.classList.add('game-over-menu');
@@ -74,7 +73,6 @@ export default class Menu {
     return div;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   getSaves() {
     const list = JSON.parse(localStorage.getItem('gamePuzzleSaves'));
     return list;
@@ -106,7 +104,6 @@ export default class Menu {
     this.saveMenu = this.createSaveMenu();
   }
 
-  // eslint-disable-next-line class-methods-use-this
   getDifficultiesList() {
     const list = [];
     for (let i = 3; i <= 8; i++) {
@@ -128,7 +125,6 @@ export default class Menu {
     return list;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   getScores() {
     const list = JSON.parse(localStorage.getItem('gamePuzzleScores'));
     return list;
@@ -155,7 +151,6 @@ export default class Menu {
     this.scoresMenu = this.createScoresMenu();
   }
 
-  // eslint-disable-next-line class-methods-use-this
   createForm() {
     const form = document.createElement('form');
     form.classList.add('form');
@@ -178,7 +173,6 @@ export default class Menu {
     return form;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   createGameMenu() {
     const gameMenuList = ['Time', 'Steps'];
     const list = document.createElement('div');
@@ -205,7 +199,6 @@ export default class Menu {
     return list;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   createBackButton() {
     const button = document.createElement('button');
     button.classList.add('back-button');
@@ -214,7 +207,6 @@ export default class Menu {
     return button;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   createSaveButton() {
     const button = document.createElement('button');
     button.classList.add('save-button');
@@ -223,7 +215,6 @@ export default class Menu {
     return button;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   createHeadline() {
     const headline = document.createElement('h1');
     headline.innerHTML = 'Gem puzzle';

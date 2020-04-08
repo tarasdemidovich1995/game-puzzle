@@ -30,7 +30,17 @@
             {
                 "exceptMethods": [
                     "createRandomList",
-                    "createImagesList"
+                    "createImagesList",
+                    "exit",
+                    "createGameOverMenu",
+                    "getSaves",
+                    "getDifficultiesList",
+                    "getScores",
+                    "createForm",
+                    "createGameMenu",
+                    "createBackButton",
+                    "createSaveButton",
+                    "createHeadline"
                 ]
             }
         ],
