@@ -1,1 +1,1 @@
-https://tarasdemidovich1995.github.io/game-puzzle
+https://hungry-morse-388771.netlify.com/
